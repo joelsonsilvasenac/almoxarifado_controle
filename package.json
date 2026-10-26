@@ -1,0 +1,27 @@
+{
+    "name": "produtos-almoxarife",
+    "version": "1.0.0",
+    "description": "API de gestão de produtos do almoxarifado corporativo",
+    "main": "src/server.js",
+    "scripts": {
+        "start": "node src/server.js"
+    },
+    "dependencies": {
+        "express": "^4.21.2",
+        "pg": "^8.13.1",
+        "dotenv": "^16.4.7",
+        "jsonwebtoken": "^9.0.2",
+        "bcrypt": "^5.1.1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ArtGustav/Produtos_Almoxarife.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/ArtGustav/Produtos_Almoxarife/issues"
+    },
+    "homepage": "https://github.com/ArtGustav/Produtos_Almoxarife#readme"
+}

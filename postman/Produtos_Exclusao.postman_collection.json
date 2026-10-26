@@ -1,0 +1,47 @@
+{
+  "info": {
+    "name": "Produtos Almoxarife - Exclusão e RBAC",
+    "description": "Fluxo DELETE /produtos/:id. Configure baseUrl, tokenAdmin, tokenUsuario, idProdutoExcluivel, idProdutoVinculado e idInexistente. Os tokens JWT devem ser emitidos pela autenticação do ambiente e conter id e cargo assinados com JWT_SECRET.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "tokenAdmin", "value": "" },
+    { "key": "tokenUsuario", "value": "" },
+    { "key": "idProdutoExcluivel", "value": "1" },
+    { "key": "idProdutoVinculado", "value": "2" },
+    { "key": "idInexistente", "value": "999999" }
+  ],
+  "item": [
+    {
+      "name": "Excluir produto existente (admin) - 200",
+      "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{tokenAdmin}}" }], "url": "{{baseUrl}}/produtos/{{idProdutoExcluivel}}" },
+      "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Retorna 200 e produto excluído', function () {", "  pm.response.to.have.status(200);", "  pm.expect(pm.response.json()).to.have.property('produto');", "});"] } }]
+    },
+    {
+      "name": "Usuário comum não pode excluir - 403",
+      "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{tokenUsuario}}" }], "url": "{{baseUrl}}/produtos/{{idProdutoExcluivel}}" },
+      "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Cargo usuario recebe 403', function () { pm.response.to.have.status(403); });"] } }]
+    },
+    {
+      "name": "Produto referenciado por solicitação - 409",
+      "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{tokenAdmin}}" }], "url": "{{baseUrl}}/produtos/{{idProdutoVinculado}}" },
+      "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Violação FK retorna 409', function () { pm.response.to.have.status(409); });"] } }]
+    },
+    {
+      "name": "Produto inexistente - 404",
+      "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{tokenAdmin}}" }], "url": "{{baseUrl}}/produtos/{{idInexistente}}" },
+      "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('ID inexistente retorna 404', function () { pm.response.to.have.status(404); });"] } }]
+    },
+    {
+      "name": "ID inválido - 400",
+      "request": { "method": "DELETE", "header": [{ "key": "Authorization", "value": "Bearer {{tokenAdmin}}" }], "url": "{{baseUrl}}/produtos/abc" },
+      "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('ID inválido retorna 400', function () { pm.response.to.have.status(400); });"] } }]
+    },
+    {
+      "name": "Sem token - 401",
+      "request": { "method": "DELETE", "url": "{{baseUrl}}/produtos/{{idProdutoExcluivel}}" },
+      "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Sem autenticação retorna 401', function () { pm.response.to.have.status(401); });"] } }]
+    }
+  ]
+}
